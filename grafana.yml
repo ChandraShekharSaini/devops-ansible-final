@@ -1,14 +1,11 @@
 ---
 - name: Install Grafana
-  hosts: all
+  hosts: monitoring
   become: yes
-
-  vars:
-    grafana_port: 3000
 
   tasks:
 
-    - name: Create Grafana repository
+    - name: Add Grafana repository
       ansible.builtin.copy:
         dest: /etc/yum.repos.d/grafana.repo
         mode: '0644'
@@ -34,7 +31,7 @@
         state: started
         enabled: yes
 
-    - name: Check Grafana service
+    - name: Check Grafana
       ansible.builtin.command:
         cmd: systemctl is-active grafana-server
       register: grafana_status
