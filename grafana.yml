@@ -1,0 +1,45 @@
+---
+- name: Install Grafana
+  hosts: all
+  become: yes
+
+  vars:
+    grafana_port: 3000
+
+  tasks:
+
+    - name: Create Grafana repository
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/grafana.repo
+        mode: '0644'
+        content: |
+          [grafana]
+          name=grafana
+          baseurl=https://rpm.grafana.com
+          repo_gpgcheck=1
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://rpm.grafana.com/gpg.key
+          sslverify=1
+          sslenforce=1
+
+    - name: Install Grafana
+      ansible.builtin.dnf:
+        name: grafana
+        state: present
+
+    - name: Enable and start Grafana
+      ansible.builtin.service:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: Check Grafana service
+      ansible.builtin.command:
+        cmd: systemctl is-active grafana-server
+      register: grafana_status
+      changed_when: false
+
+    - name: Display Grafana status
+      ansible.builtin.debug:
+        msg: "Grafana status: {{ grafana_status.stdout }}"
