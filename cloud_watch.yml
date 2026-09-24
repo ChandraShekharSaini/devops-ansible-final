@@ -1,3 +1,4 @@
+# sudo systemctl status amazon-cloudwatch-agent
 ---
 - name: Setup Apache and CloudWatch on EC2
   hosts: all
